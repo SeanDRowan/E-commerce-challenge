@@ -38,7 +38,6 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   // create a new category
-   // untested
    try {
     const catData = await Category.create({
       category_name: req.body.category_name,
@@ -49,12 +48,34 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
+router.put('/:id', async (req, res) => {
+  Category.update(
+    {
+      category_name: req.body.category_name
+    },
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
+  )
+    .then((updatedcat) => {
+      res.json(updatedcat);
+    })
+    .catch((err) => res.json(err));
 });
 
 router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
+ // Looks for the books based on isbn given in the request parameters and deletes the instance from the database
+ Category.destroy({
+  where: {
+    id: req.params.id,
+  },
+})
+  .then((deletedCat) => {
+    res.json(deletedCat);
+  })
+  .catch((err) => res.json(err));
 });
 
 module.exports = router;
